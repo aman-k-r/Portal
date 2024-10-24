@@ -126,7 +126,7 @@ function Portal() {
       // Display all errors as an alert
       alert(errors.join("\n"));
     } else {
-      // navigate to the payment page // I have not made that yet 
+      // navigate to the payment page // I have not made that yet
       console.log(formData);
       alert("Form submitted successfully!");
       navigate("/payment");
@@ -191,13 +191,16 @@ function Portal() {
               <label className="form-label">College Name</label>
               <div className="form-check">
                 <input
-                 className="form-check-input"
-                 type="radio"
-                 name="college" // Add name attribute
-                 id="collegeDefault"
-                 value="Government Engineering College, Samastipur" // Add value attribute
-                 checked={formData.college === "Government Engineering College, Samastipur"} // Set checked based on state
-                 onChange={handleChange}
+                  className="form-check-input"
+                  type="radio"
+                  name="college" // Add name attribute
+                  id="collegeDefault"
+                  value="Government Engineering College, Samastipur" // Add value attribute
+                  checked={
+                    formData.college ===
+                    "Government Engineering College, Samastipur"
+                  } // Set checked based on state
+                  onChange={handleChange}
                 />
                 <label className="form-check-label" htmlFor="collegeDefault">
                   Government Engineering College,Samastipur
@@ -543,6 +546,27 @@ function Portal() {
                 />
                 <label htmlFor="freefire">Free Fire</label>
               </div>
+
+              <div className="form-check">
+                <input
+                 className="form-check-input"
+                 type="radio"
+                 id="none"
+                 name="victoryArenaGame"
+                 value=""
+                 checked={formData.game === ""}
+                 onChange={(e) =>
+                   setFormData({
+                     ...formData,
+                     game: "",
+                     squadName: "",
+                   })
+                 }
+                />
+                <label htmlFor="none">None</label>
+              </div>
+
+              
             </div>
 
             {/* Squad Name Field */}
@@ -575,33 +599,36 @@ function Portal() {
             </div>
 
             {/* T-shirt Size Options */}
-            <div className="form-group">
-              <label htmlFor="tshirtSize" className="form-label">
-                Select Size
-              </label>
-              <p style={{ fontStyle: "italic", color: "gray" }}>
-                * T-shirt size is required if participating in events. It is
-                optional for Victory Arena only participants.
-              </p>
-              <select
-                className="form-select mb-3"
-                id="tshirtSize"
-                required
-                value={formData.tshirtSize}
-                onChange={(e) =>
-                  setFormData({ ...formData, tshirtSize: e.target.value })
-                }
-              >
-                <option value="">Choose Size</option>
-                <option value="XS">XS</option>
-                <option value="S">S</option>
-                <option value="M">M</option>
-                <option value="L">L</option>
-                <option value="XL">XL</option>
-                <option value="XXL">XXL</option>
-              </select>
-            </div>
-
+            {(formData.game ||
+              formData.groupEvents.length > 0 ||
+              formData.individualEvents.length > 0) && (
+              <div className="form-group">
+                <label htmlFor="tshirtSize" className="form-label">
+                  Select Size
+                </label>
+                <p style={{ fontStyle: "italic", color: "gray" }}>
+                  * T-shirt size is required if participating in events. It is
+                  optional for Victory Arena only participants.
+                </p>
+                <select
+                  className="form-select mb-3"
+                  id="tshirtSize"
+                  required
+                  value={formData.tshirtSize}
+                  onChange={(e) =>
+                    setFormData({ ...formData, tshirtSize: e.target.value })
+                  }
+                >
+                  <option value="">Choose Size</option>
+                  <option value="XS">XS</option>
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                  <option value="XXL">XXL</option>
+                </select>
+              </div>
+            )}
             {/* Checkbox to review details */}
             <div className="form-check mt-4">
               <input
