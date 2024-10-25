@@ -148,6 +148,7 @@ function Portal() {
               <input
                 type="text"
                 value={formData.name}
+                name="name"
                 className="form-control"
                 id="exampleInputName"
                 required
@@ -162,6 +163,7 @@ function Portal() {
               </label>
               <input
                 type="email"
+                name="email"
                 value={formData.email}
                 className="form-control"
                 id="exampleInputEmail1"
@@ -178,6 +180,7 @@ function Portal() {
               </label>
               <input
                 type="tel"
+                name="contact"
                 value={formData.contact}
                 className="form-control"
                 id="exampleInputPhone"
@@ -236,6 +239,7 @@ function Portal() {
               </label>
               <input
                 type="text"
+                name="registrationNo"
                 value={formData.registrationNo}
                 className="form-control"
                 id="exampleRegNo"
@@ -649,6 +653,7 @@ function Portal() {
                 type="button"
                 className="btn btn-success mb-3"
                 disabled={!isChecked}
+                onClick={handleSubmit}
               >
                 Proceed to Payment
               </button>
