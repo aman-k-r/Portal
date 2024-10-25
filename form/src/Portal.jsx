@@ -22,6 +22,7 @@ function Portal() {
     isParticipatingInIndividualEvents: false,
   });
 
+  const [fee, setFee] = useState(0); // State to store the participation fee
   const [isChecked, setIsChecked] = useState(false);
   const navigate = useNavigate();
 
@@ -73,6 +74,34 @@ function Portal() {
     return newErrors;
   };
 
+  // Calculate participation fee based on selected events
+  // a function to calculate participation fee
+  // if participating in group events or individual events = 300
+  // if participating in victory arena only events 50/-
+  // if participating in victory arena event with tshirt 350/-
+  // if participating in both events and victory arena 350
+  const calculateFee = () => {
+    const isParticipatingInIndividualOrGroup =
+      formData.individualEvents.length > 0 || formData.groupEvents.length > 0;
+
+    let calculatedFee = 0;
+
+    if (isParticipatingInIndividualOrGroup && formData.game) {
+      // Participating in both events and Victory Arena
+      calculatedFee = 350;
+    } else if (isParticipatingInIndividualOrGroup) {
+      // Participating in group or individual events only
+      calculatedFee = 300;
+    } else if (formData.game && formData.tshirtSize != "") {
+      // Participating in Victory Arena with T-shirt
+      calculatedFee = 350;
+    } else if (formData.game) {
+      // Participating in Victory Arena only without T-shirt
+      calculatedFee = 50;
+    }
+
+    setFee(calculatedFee);
+  };
   // Handle individual events selection
   const handleIndividualEventsChange = (event) => {
     const { value, checked } = event.target;
@@ -88,6 +117,7 @@ function Portal() {
         isParticipatingInIndividualEvents: newIndividualEvents.length > 0,
       };
     });
+    calculateFee();
   };
 
   // Handle group events selection
@@ -99,6 +129,11 @@ function Portal() {
         : prevData.groupEvents.filter((e) => e !== value); // Remove event if unchecked
       return { ...prevData, groupEvents: newGroupEvents };
     });
+    calculateFee();
+  };
+  const handleGameChange = (e) => {
+    setFormData({ ...formData, game: e.target.value, squadName: "" });
+    calculateFee();
   };
 
   // Handle form input changes
@@ -128,17 +163,18 @@ function Portal() {
     } else {
       // navigate to the payment page // I have not made that yet
       console.log(formData);
+      console.log(fee);
       alert("Form submitted successfully!");
       navigate("/payment");
     }
   };
   return (
     <>
-      <div className="container mt-5">
+      <div className="container form-container">
         <h2>Nexus'24 Registration Form</h2>
         <div className="section1 d-flex justify-content-center">
           <form onSubmit={handleSubmit}>
-            <h4>Section 01 : Personal Details</h4>
+            <h4 className="sec-head">Personal Details</h4>
             {/* Name Field */}
             <div className="mb-3">
               <label htmlFor="exampleInputName" className="form-label">
@@ -206,7 +242,7 @@ function Portal() {
                   onChange={handleChange}
                 />
                 <label className="form-check-label" htmlFor="collegeDefault">
-                  Government Engineering College,Samastipur
+                  Government Engineering College, Samastipur
                 </label>
               </div>
             </div>
@@ -280,7 +316,7 @@ function Portal() {
               ))}
             </div>
 
-            <h4>Section 02 : Event Selection</h4>
+            <h4 className="sec-head">Event Selection</h4>
             <p>
               Please select the events you wish to participate in during Nexus
               24. Each event offers a unique opportunity to showcase your skills
@@ -501,7 +537,7 @@ function Portal() {
             )}
 
             {/* Victory Arena */}
-            <h4>Victory Arena [BGMI/FF]</h4>
+            <h4 className="sec-head">Victory Arena [BGMI/FF]</h4>
             <p>
               Get ready to enter the competitive world of E-Sports at Nexus 24!
               Whether you're a seasoned gamer or just looking to have some fun,
@@ -513,7 +549,7 @@ function Portal() {
 
             {/* Game Select */}
             <div>
-              <label>Victory Arena Game:</label>
+              <label className="form-label">Victory Arena Game:</label>
               <div className="form-check">
                 <input
                   className="form-check-input"
@@ -540,37 +576,23 @@ function Portal() {
                   name="victoryArenaGame"
                   value="FF"
                   checked={formData.game === "FF"}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      game: e.target.value,
-                      squadName: "", // Reset squad name when the game is changed
-                    })
-                  }
+                  onChange={handleGameChange}
                 />
                 <label htmlFor="freefire">Free Fire</label>
               </div>
 
               <div className="form-check">
                 <input
-                 className="form-check-input"
-                 type="radio"
-                 id="none"
-                 name="victoryArenaGame"
-                 value=""
-                 checked={formData.game === ""}
-                 onChange={(e) =>
-                   setFormData({
-                     ...formData,
-                     game: "",
-                     squadName: "",
-                   })
-                 }
+                  className="form-check-input"
+                  type="radio"
+                  id="none"
+                  name="victoryArenaGame"
+                  value=""
+                  checked={formData.game === ""}
+                  onChange={handleGameChange}
                 />
                 <label htmlFor="none">None</label>
               </div>
-
-              
             </div>
 
             {/* Squad Name Field */}
@@ -591,14 +613,14 @@ function Portal() {
                 />
               </div>
             )}
-            <h4>Section 03 : T-Shirt Selection</h4>
+            <h4 className="sec-head">T-Shirt Selection</h4>
 
             {/* T-shirt Design Image */}
-            <div className="mb-3">
+            <div className="mb-3 ">
               <img
                 src="/tshirt.png"
                 alt="T-shirt Design"
-                className="img-fluid"
+                className="img-fluid "
               />
             </div>
 
@@ -651,7 +673,7 @@ function Portal() {
             <div className="mt-3 text-center">
               <button
                 type="button"
-                className="btn btn-success mb-3"
+                className="btn btn-success mb-3 sub-btn"
                 disabled={!isChecked}
                 onClick={handleSubmit}
               >
