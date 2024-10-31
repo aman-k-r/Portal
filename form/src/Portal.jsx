@@ -81,27 +81,20 @@ function Portal() {
   // if participating in victory arena event with tshirt 350/-
   // if participating in both events and victory arena 350
   const calculateFee = () => {
-    const isParticipatingInIndividualOrGroup =
-      formData.individualEvents.length > 0 || formData.groupEvents.length > 0;
-
-    let calculatedFee = 0;
-
-    if (isParticipatingInIndividualOrGroup && formData.game) {
-      // Participating in both events and Victory Arena
-      calculatedFee = 350;
-    } else if (isParticipatingInIndividualOrGroup) {
-      // Participating in group or individual events only
-      calculatedFee = 300;
-    } else if (formData.game && formData.tshirtSize != "") {
-      // Participating in Victory Arena with T-shirt
-      calculatedFee = 350;
-    } else if (formData.game) {
-      // Participating in Victory Arena only without T-shirt
-      calculatedFee = 50;
+    let fee = 0;
+    if(formData.individualEvents.length > 0 || formData.groupEvents.length > 0){
+      fee = 300;
+      if (formData.game) {
+        fee += 50;
+      }
     }
-
-    setFee(calculatedFee);
+    if (formData.game && formData.tshirtSize != "") {
+      fee = 350;
+    }
+    setFee(fee);
+    console.log(fee)
   };
+
   // Handle individual events selection
   const handleIndividualEventsChange = (event) => {
     const { value, checked } = event.target;
@@ -117,7 +110,6 @@ function Portal() {
         isParticipatingInIndividualEvents: newIndividualEvents.length > 0,
       };
     });
-    calculateFee();
   };
 
   // Handle group events selection
@@ -129,11 +121,9 @@ function Portal() {
         : prevData.groupEvents.filter((e) => e !== value); // Remove event if unchecked
       return { ...prevData, groupEvents: newGroupEvents };
     });
-    calculateFee();
   };
   const handleGameChange = (e) => {
     setFormData({ ...formData, game: e.target.value, squadName: "" });
-    calculateFee();
   };
 
   // Handle form input changes
@@ -153,7 +143,7 @@ function Portal() {
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    calculateFee();
     // Perform validation when Submit button is pressed and also navigation
     const errors = validateForm();
 
@@ -163,7 +153,7 @@ function Portal() {
     } else {
       // navigate to the payment page // I have not made that yet
       console.log(formData);
-      console.log(fee);
+      // console.log(fee);
       alert("Form submitted successfully!");
       navigate("/payment");
     }
@@ -173,7 +163,7 @@ function Portal() {
       <div className="container form-container">
         <h2>Nexus'24 Registration Form</h2>
         <div className="section1 d-flex justify-content-center">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={calculateFee}>
             <h4 className="sec-head">Personal Details</h4>
             {/* Name Field */}
             <div className="mb-3">
@@ -675,7 +665,7 @@ function Portal() {
                 type="button"
                 className="btn btn-success mb-3 sub-btn"
                 disabled={!isChecked}
-                onClick={handleSubmit}
+                onClick={handleSubmit }
               >
                 Proceed to Payment
               </button>
